@@ -4,6 +4,7 @@ import pandas as pd
 from kaggle.api.kaggle_api_extended import KaggleApi
 import plotly.express as px
 
+
 api = KaggleApi()
 api.authenticate()
 
@@ -94,28 +95,57 @@ for i in range(0, len(data_list)):
 data.to_csv("russia_losses_equipment.csv", index=False)
 
 
+def wizualizacja(xx, yy):
+    fig = px.scatter(data, x=xx, y=yy, color='Tydzień',
+                     marginal_y='box', marginal_x='histogram', size='Żołnierze')  # rug instead of histogram
+
+    fig.update_layout(
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=7,
+                         label="1 week",
+                         step="day",
+                         stepmode="backward"),
+                    dict(count=30,
+                         label="1 month",
+                         step="day",
+                         stepmode="todate"),
+                    dict(count=365,
+                         label="1 Year",
+                         step="day",
+                         stepmode="todate"),
+                    dict(count=180,
+                         label="Half Year",
+                         step="day",
+                         stepmode="todate"),
+
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+            type="date"
+        )
+    )
+
+    fig.show()
+
+
 def wykres_ilosc():
     choice = value_inside.get()
     if choice == 'Wszystko':
-        fig = px.scatter(data, x=data['date'], y=data['Ilość'], color='Tydzień',
-                         marginal_y='box', marginal_x= 'histogram', size='Żołnierze')
+        wizualizacja(data['date'], data['Ilość'])
 
-        fig.show()
     if choice == 'Samoloty':
-        fig = px.scatter(data, x=data['date'], y=data['Samoloty'], color='Tydzień',
-                         marginal_y='box')
+        wizualizacja(data['date'], data['Samoloty'])
 
-        fig.show()
-    if choice == 'Drony':
-        fig = px.scatter(data, x=data['date'], y=data['Drony'], color='Tydzień',
-                         marginal_y='box')
-
-        fig.show()
     if choice == 'Czołgi':
-        fig = px.scatter(data, x=data['date'], y=data['Czołgi'], color='Tydzień',
-                         marginal_y='box')
+        wizualizacja(data['date'], data['Czołgi'])
 
-        fig.show()
+    if choice == 'Drony':
+        wizualizacja(data['date'], data['Drony'])
 
 
 app = Tk()
